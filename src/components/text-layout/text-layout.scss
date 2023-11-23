@@ -1,0 +1,120 @@
+.text-layout {
+  padding-top: 57vh;
+  min-width: 100vw;
+  min-height: 100vh;
+
+  @media (min-width: 992px) {
+    padding-top: 20vh;
+  }
+
+  @media (min-width: 768px) and (max-width: 1200px) and (min-height: 1000px) {
+    padding-top: 55vh;
+  }
+
+  @media (max-width: 992px) and (min-height: 1000px) {
+    padding-top: 60vh;
+  }
+
+  @media (max-width: 992px) and (max-height: 500px) {
+    padding-top: 30vh;
+  }
+
+  &__heading {
+    margin-bottom: 1.25rem;
+
+    @include min-mobile-lg {
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 23.5vh;
+      margin-bottom: 0;
+      text-transform: uppercase;
+      font-weight: 700;
+      user-select: none;
+      letter-spacing: -0.085em;
+      line-height: 1;
+      white-space: nowrap;
+      margin-left: 3.8rem;
+
+      @media (min-width: 540px) and (min-height: 800px) {
+        font-size: 28.5vmin;
+      }
+
+      @media (min-width: 768px) and (max-width: 1200px) and (min-height: 1000px) {
+        font-size: 21.5vmin;
+      }
+
+      @include min-laptop {
+        font-size: 47.5vmin;
+      }
+    }
+  }
+
+  &__title {
+    font-size: 1.25rem;
+    line-height: 1em;
+    margin-bottom: r(12);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  &__description {
+    margin-bottom: 2.5rem;
+    font-size: 0.6rem;
+    line-height: 1.72em;
+  }
+
+  &__title,
+  &__description {
+    margin-left: 3.5rem;
+    max-width: 12.9rem;
+
+    @include min-laptop {
+      max-width: 21rem;
+    }
+  }
+
+  &__close-button {
+    @include button-mixin;
+    width: 10vmin;
+    height: 10vmin;
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+
+    @include min-mobile-lg {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    svg {
+      path,
+      polygon {
+        transition: fill $transition-default;
+      }
+
+      &:hover {
+        path,
+        polygon {
+          fill: $purple;
+        }
+      } 
+    }
+  }
+}
+
+.cat-details {
+  display: none;
+  
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background-color: $main-background;
+  z-index: -1;
+
+  .text-container span {
+    transform: translate(100%);
+  }
+}

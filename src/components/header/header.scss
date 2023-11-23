@@ -1,0 +1,27 @@
+.header {
+  width: 2rem;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #ffffff83;
+  background-color: $darkblue;
+  z-index: 2;
+
+  &__menu-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 1rem;
+    cursor: pointer;
+
+    line {
+      transition: stroke $transition-default;
+    }
+
+    &:hover line {
+      stroke: $purple;
+    }
+  }
+}
