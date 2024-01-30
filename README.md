@@ -1,3 +1,1 @@
-#3 slider variant
-
-https://cat-slider-five.vercel.app/
+https://cat-slider-lyart.vercel.app/
