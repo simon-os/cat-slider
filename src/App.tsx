@@ -1,33 +1,27 @@
 import { 
   useEffect, useLayoutEffect, 
-  useRef, useState, useContext 
+  useRef, useState 
 } from 'react';
 import Slider from './components/slider';
 import TextLayout from './components/text-layout';
 import Header from './components/header';
 import gsap from 'gsap';
 import { CatDetails } from './App.types';
-import { State } from './store/types';
-import { CatApiServiceContext } from './context/cat-api-service-context';
+import { State } from './lib/store/types';
 import { useDispatch, useSelector } from 'react-redux/es/exports';
 import { 
-  catsError, catsLoaded, catsRequested, 
   transitionStart, transitionEnd 
-} from './store/actions';
+} from './lib/store/actions';
 import { 
   hideDetailsAnimation,
   initialLoadingAnimation, 
   setInitialAnimationPositions, 
   showDetailsAnimation 
 } from './animations';
-
-const textTargets = [
-  '.text-container span', 
-  '.text-container .text-element'
-];
+import { useCatBreeds } from './lib/cat-api/cat-api';
 
 const App = () => {
-
+  const { data, isLoading, status, error } = useCatBreeds();
   const [cats, setCats] = useState([] as CatDetails[]);
   const [currentCat, setCurrentCat] = useState<CatDetails>({} as CatDetails);
 
@@ -35,13 +29,16 @@ const App = () => {
   const tl = useRef<GSAPTimeline>({} as GSAPTimeline);
 
   const dispatch = useDispatch();
-  const loading = useSelector((state: State) => state.catsLoading);
   const isInTransition = useSelector((state: State) => state.isInTransition);
-  const catApiService = useContext(CatApiServiceContext);
+
+  const textTargets = [
+    '.text-container span', 
+    '.text-container .text-element'
+  ];
 
   useLayoutEffect(() => {
     setInitialAnimationPositions(textTargets);
-    if (loading) return;
+    if (isLoading) return;
 
     const ctx = gsap.context(() => {
       tl.current = gsap.timeline({
@@ -55,29 +52,22 @@ const App = () => {
     }, ctxRoot);
 
     return () => ctx.revert();
-  }, [loading]);
+  }, [isLoading]);
 
   useEffect(() => {
-    dispatch(catsRequested());
-
-    catApiService.getBreeds()
-      .then((res) => {
-        const cats: CatDetails[] = res.data.map(({ 
+    if (status === 'success') {
+      const cats: CatDetails[] = data.map(({ 
           id, name, image, description 
         }: CatDetails) => ({
-          id,
-          name, 
-          image,
-          description
+          id, name, image, description
         }));
-        
-        setCats(cats);
-        dispatch(catsLoaded());
-      })
-      .catch((err) => {
-        dispatch(catsError(err));
-      })
-  }, []);
+      setCats(cats);
+    }
+
+    if (status === 'error') {
+      console.error(error);
+    }
+  }, [status]);
 
   const handleDetailsOpen = (id: string): void => {
     if (isInTransition) return;
@@ -102,8 +92,8 @@ const App = () => {
       tl.current, 
       textTargets, 
       () => {
-        dispatch(transitionEnd())
-        setCurrentCat({} as CatDetails)
+        dispatch(transitionEnd());
+        setCurrentCat({} as CatDetails);
       }
     );
   };
@@ -126,8 +116,8 @@ const App = () => {
 
         <Slider 
           cats={cats} 
-          handleDetailsOpen={handleDetailsOpen}
           currentCat={currentCat}
+          handleDetailsOpen={handleDetailsOpen}
         />
 
         <TextLayout 
