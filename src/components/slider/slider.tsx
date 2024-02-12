@@ -1,12 +1,10 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { SliderImage, SliderProps } from './slider.types';
 import { CatDetails } from '../../App.types';
-import { CatApiServiceContext } from '../../context/cat-api-service-context';
-import { CatImage } from '../../services/cat-api-service.types';
-import { useDispatch, useSelector } from 'react-redux/es/exports';
-import { State } from '../../store/types';
-import { catImageError, catImageLoaded, catImageRequested } from '../../store/actions';
+import { CatImage } from '../../lib/cat-api/cat-api.types';
 import Spinner from '../spinner';
+import { useRandomImageOfBreed } from '../../lib/cat-api/cat-api';
+import { useQueryClient } from '@tanstack/react-query';
 
 const Image = ({ id, url, name, handleDetailsOpen }: SliderImage) => {
   return (
@@ -20,14 +18,12 @@ const Image = ({ id, url, name, handleDetailsOpen }: SliderImage) => {
 };
 
 const Slider = ({ cats, currentCat, handleDetailsOpen }: SliderProps) => {
-
+  const queryClient = useQueryClient();
+  const { data, isRefetching, status, error } = useRandomImageOfBreed(currentCat.id);
+  
   const [catsEven, setCatsEven] = useState([] as CatDetails[]);
   const [catsOdd, setCatsOdd] = useState([] as CatDetails[]);
   const [image, setImage] = useState({} as CatImage);
-
-  const dispatch = useDispatch();
-  const loading = useSelector((state: State) => state.catImageLoading);
-  const catApiService = useContext(CatApiServiceContext);
 
   useEffect(() => {
     setImage(currentCat.image);
@@ -41,17 +37,17 @@ const Slider = ({ cats, currentCat, handleDetailsOpen }: SliderProps) => {
   }, [cats]);
 
   const handleLoadRandomImage = (): void => {
-    if (loading) return;
-    dispatch(catImageRequested());
+    if (isRefetching) return;
 
-    catApiService.getRandomImageOfBreed(currentCat.id)
-      .then((res) => {
-        setImage(res.data[0])
-        dispatch(catImageLoaded());
-      })
-      .catch((err) => {
-        dispatch(catImageError(err));
+    if (status === 'success') {
+      setImage(data[0]);
+      queryClient.invalidateQueries({ 
+        queryKey: ['cat-breed', currentCat.id] 
       });
+    } 
+    else if (status === 'error') {
+      console.error(error);
+    }
   };
 
   const renderImage = ({ id, image, name }: CatDetails) => {
@@ -81,13 +77,13 @@ const Slider = ({ cats, currentCat, handleDetailsOpen }: SliderProps) => {
       </div>
 
       {
-        currentCat &&
+        currentCat && 
         (<>
-          { loading && <Spinner /> }
+          { isRefetching && <Spinner /> }
 
           <picture className="slider__full-image">
             {
-              !loading &&
+              !isRefetching &&
               <img 
                 src={image?.url} 
                 alt={currentCat.name} 

@@ -1,4 +1,4 @@
-import { CatImage } from './services/cat-api-service.types';
+import { CatImage } from './lib/cat-api/cat-api.types';
 
 export interface CatDetails {
   id: string,
