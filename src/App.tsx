@@ -7,29 +7,23 @@ import TextLayout from './components/text-layout';
 import Header from './components/header';
 import gsap from 'gsap';
 import { CatDetails } from './App.types';
-import { State } from './lib/store/types';
-import { useDispatch, useSelector } from 'react-redux/es/exports';
-import { 
-  transitionStart, transitionEnd 
-} from './lib/store/actions';
+import { useCatBreeds } from './lib/cat-api/cat-api';
+import { useInTransition } from './lib/store/useInTransition';
 import { 
   hideDetailsAnimation,
   initialLoadingAnimation, 
   setInitialAnimationPositions, 
   showDetailsAnimation 
 } from './animations';
-import { useCatBreeds } from './lib/cat-api/cat-api';
 
 const App = () => {
   const { data, isLoading, status, error } = useCatBreeds();
   const [cats, setCats] = useState([] as CatDetails[]);
   const [currentCat, setCurrentCat] = useState<CatDetails>({} as CatDetails);
-
+  
+  const { isInTransition, setInTransition } = useInTransition();
   const ctxRoot = useRef<HTMLDivElement>(null);
   const tl = useRef<GSAPTimeline>({} as GSAPTimeline);
-
-  const dispatch = useDispatch();
-  const isInTransition = useSelector((state: State) => state.isInTransition);
 
   const textTargets = [
     '.text-container span', 
@@ -71,7 +65,7 @@ const App = () => {
 
   const handleDetailsOpen = (id: string): void => {
     if (isInTransition) return;
-    dispatch(transitionStart());
+    setInTransition(true);
     
     const targetCat = cats.find((cat) => cat.id === id);
     targetCat && setCurrentCat(targetCat);
@@ -80,19 +74,19 @@ const App = () => {
     showDetailsAnimation(
       tl.current, 
       textTargets, 
-      () => dispatch(transitionEnd())
+      () => setInTransition(false)
     );
   };
 
   const handleDetailsClose = (): void => {
     if (isInTransition) return;
-    dispatch(transitionStart());
+    setInTransition(true);
 
     hideDetailsAnimation(
       tl.current, 
       textTargets, 
       () => {
-        dispatch(transitionEnd());
+        setInTransition(false);
         setCurrentCat({} as CatDetails);
       }
     );

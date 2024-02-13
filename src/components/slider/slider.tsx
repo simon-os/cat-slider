@@ -5,6 +5,7 @@ import { CatImage } from '../../lib/cat-api/cat-api.types';
 import Spinner from '../spinner';
 import { useRandomImageOfBreed } from '../../lib/cat-api/cat-api';
 import { useQueryClient } from '@tanstack/react-query';
+import { useInTransition } from '../../lib/store/useInTransition';
 
 const Image = ({ id, url, name, handleDetailsOpen }: SliderImage) => {
   return (
@@ -20,6 +21,7 @@ const Image = ({ id, url, name, handleDetailsOpen }: SliderImage) => {
 const Slider = ({ cats, currentCat, handleDetailsOpen }: SliderProps) => {
   const queryClient = useQueryClient();
   const { data, isRefetching, status, error } = useRandomImageOfBreed(currentCat.id);
+  const { isInTransition } = useInTransition();
   
   const [catsEven, setCatsEven] = useState([] as CatDetails[]);
   const [catsOdd, setCatsOdd] = useState([] as CatDetails[]);
@@ -79,7 +81,7 @@ const Slider = ({ cats, currentCat, handleDetailsOpen }: SliderProps) => {
       {
         currentCat && 
         (<>
-          { isRefetching && <Spinner /> }
+          { (!isInTransition && isRefetching) && <Spinner /> }
 
           <picture className="slider__full-image">
             {

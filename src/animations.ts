@@ -68,8 +68,7 @@ export const hideDetailsAnimation = (
       autoAlpha: 0,
     }, '<')
     .to('.slider__random-image-button', {
-      autoAlpha: 0,
-      onComplete: callback
+      autoAlpha: 0
     }, '<')
     .set('.cat-details', {
       zIndex: '-1',
@@ -80,7 +79,8 @@ export const hideDetailsAnimation = (
     }, '<')
     .to(textTargets, {
       y: '0',
-      duration: .5
+      duration: .5,
+      onComplete: callback
     }, '<.01');
 };
 
