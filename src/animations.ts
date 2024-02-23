@@ -9,7 +9,7 @@ export const showDetailsAnimation = (
     .to(textTargets, {
       y: '100%',
     })
-    .set('.text-layout__close-button', {
+    .set('.close-button', {
       autoAlpha: 0
     })
     .set('.cat-details', {
@@ -37,7 +37,7 @@ export const showDetailsAnimation = (
     .set('.slider__wrapper', {
       pointerEvents: 'none',
     }, '<')
-    .to('.text-layout__close-button', {
+    .to('.close-button', {
       autoAlpha: 1,
       onComplete: callback
     }, '<')
@@ -49,7 +49,7 @@ export const hideDetailsAnimation = (
 ): void => {
 
   tl
-    .to('.text-layout__close-button', {
+    .to('.close-button', {
       autoAlpha: 0,
     })
     .to(textTargets, {

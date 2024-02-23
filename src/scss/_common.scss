@@ -26,7 +26,7 @@ body {
   position: relative;
 }
 
-.main-wrapper {
+.app-wrapper {
   min-height: 100vh;
 }
 
@@ -74,5 +74,30 @@ picture img {
     height: 100%;
     background-color: #fff;
     z-index: 3;
+  }
+}
+
+.close-button {
+  @include button-mixin;
+  width: 10vmin;
+  height: 10vmin;
+ 
+  @include min-mobile-lg {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  svg {
+    path,
+    polygon {
+      transition: fill $transition-default;
+    }
+
+    &:hover {
+      path,
+      polygon {
+        fill: $purple;
+      }
+    } 
   }
 }
