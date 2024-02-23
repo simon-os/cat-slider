@@ -1,0 +1,20 @@
+.cat-details {
+  display: none;
+  
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  background-color: $main-background;
+  z-index: -1;
+
+  .text-container span {
+    transform: translate(100%);
+  }
+
+  &__close-button {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;  
+  }
+}

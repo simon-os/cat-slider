@@ -1,4 +1,4 @@
-.text-layout {
+.layout {
   padding-top: 57vh;
   min-width: 100vw;
   min-height: 100vh;
@@ -73,48 +73,5 @@
     @include min-laptop {
       max-width: 21rem;
     }
-  }
-
-  &__close-button {
-    @include button-mixin;
-    width: 10vmin;
-    height: 10vmin;
-    position: absolute;
-    top: 0.8rem;
-    right: 1rem;
-
-    @include min-mobile-lg {
-      width: 2rem;
-      height: 2rem;
-    }
-
-    svg {
-      path,
-      polygon {
-        transition: fill $transition-default;
-      }
-
-      &:hover {
-        path,
-        polygon {
-          fill: $purple;
-        }
-      } 
-    }
-  }
-}
-
-.cat-details {
-  display: none;
-  
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  background-color: $main-background;
-  z-index: -1;
-
-  .text-container span {
-    transform: translate(100%);
   }
 }

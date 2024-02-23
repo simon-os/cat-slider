@@ -46,6 +46,13 @@ export interface CatImage {
   url: string
 }
 
+export interface CatDetails {
+  id: string,
+  name: string, 
+  description: string,
+  image: CatImage
+};
+
 interface Weight {
   imperial: string
   metric: string

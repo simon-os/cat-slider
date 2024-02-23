@@ -3,35 +3,34 @@ import {
   useRef, useState 
 } from 'react';
 import Slider from './components/slider';
-import TextLayout from './components/text-layout';
 import Header from './components/header';
 import gsap from 'gsap';
-import { CatDetails } from './App.types';
 import { useCatBreeds } from './lib/cat-api/cat-api';
 import { useInTransition } from './lib/store/useInTransition';
+import Loader from './components/loader';
+import MainScreen from './components/main-screen';
+import CatDetailScreen from './components/cat-detail-screen';
+import { TEXT_TARGETS } from './lib/constants';
+import { useCurrentCat } from './lib/store/useCurrentCat';
+import { CatDetails } from './lib/cat-api/cat-api.types';
 import { 
-  hideDetailsAnimation,
   initialLoadingAnimation, 
   setInitialAnimationPositions, 
   showDetailsAnimation 
 } from './animations';
 
-const App = () => {
+export default function App() {
   const { data, isLoading, status, error } = useCatBreeds();
-  const [cats, setCats] = useState([] as CatDetails[]);
-  const [currentCat, setCurrentCat] = useState<CatDetails>({} as CatDetails);
+  const [cats, setCats] = useState<CatDetails[]>([]);
   
   const { isInTransition, setInTransition } = useInTransition();
+  const { currentCat, setCurrentCat } = useCurrentCat();
+  
   const ctxRoot = useRef<HTMLDivElement>(null);
-  const tl = useRef<GSAPTimeline>({} as GSAPTimeline);
-
-  const textTargets = [
-    '.text-container span', 
-    '.text-container .text-element'
-  ];
+  const tl = useRef<GSAPTimeline>();
 
   useLayoutEffect(() => {
-    setInitialAnimationPositions(textTargets);
+    setInitialAnimationPositions(TEXT_TARGETS);
     if (isLoading) return;
 
     const ctx = gsap.context(() => {
@@ -73,40 +72,17 @@ const App = () => {
     if (!tl.current) return;
     showDetailsAnimation(
       tl.current, 
-      textTargets, 
+      TEXT_TARGETS, 
       () => setInTransition(false)
     );
   };
 
-  const handleDetailsClose = (): void => {
-    if (isInTransition) return;
-    setInTransition(true);
-
-    hideDetailsAnimation(
-      tl.current, 
-      textTargets, 
-      () => {
-        setInTransition(false);
-        setCurrentCat({} as CatDetails);
-      }
-    );
-  };
-
-  const getCatNumber = (cat: CatDetails): number => {
-    return cats.findIndex((c) => c.id === cat.id) + 1;
-  }
-
   return (
-    <div className="main-wrapper" ref={ctxRoot}>
+    <div className="app-wrapper" ref={ctxRoot}>
       <Header />
 
-      <main className="main-layout">
-        <TextLayout 
-          heading='Gorgeous Fluffy Awesome'
-          title='Cats Gallery'
-          description='Stunning imagery of truly majestic creatures'
-          isMarquee
-        />
+      <main>
+        <MainScreen />
 
         <Slider 
           cats={cats} 
@@ -114,21 +90,13 @@ const App = () => {
           handleDetailsOpen={handleDetailsOpen}
         />
 
-        <TextLayout 
-          classList='cat-details'
-          heading={getCatNumber(currentCat).toString()}
-          title={currentCat.name}
-          description={currentCat.description}
-          handleDetailsClose={handleDetailsClose}
+        <CatDetailScreen
+          cats={cats} 
+          tl={tl}
         />
       </main>
 
-      <div className="loader-background">
-        <div className="loader-background__dark"></div>
-        <div className="loader-background__light"></div>
-      </div>
+      <Loader />
     </div>
   );
 }
-
-export default App;

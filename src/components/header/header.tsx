@@ -1,6 +1,4 @@
-import React from 'react';
-
-const Header = () => {
+export default function Header() {
   return (
     <header className="header">
       <svg className="header__menu-icon" width="800px" height="800px" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
@@ -11,5 +9,3 @@ const Header = () => {
     </header>
   );
 };
-
-export default Header;
